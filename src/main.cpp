@@ -21,8 +21,8 @@ void setup() {
   unoController.begin();
 #endif
 
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  pinMode(PIN_LED, OUTPUT);
+  digitalWrite(PIN_LED, HIGH);
 
   Serial.println("[@] Setup complete");
 }

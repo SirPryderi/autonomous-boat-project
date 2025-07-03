@@ -8,9 +8,9 @@ class UnoController {
   }
 
   void handle() {
-    digitalWrite(LED_PIN, HIGH);
+    digitalWrite(PIN_LED, HIGH);
     delay(1000);
-    digitalWrite(LED_PIN, LOW);
+    digitalWrite(PIN_LED, LOW);
     delay(1000);
   }
 };
