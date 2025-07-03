@@ -25,6 +25,7 @@ void setup() {
   digitalWrite(PIN_LED, HIGH);
 
   Serial.println("[@] Setup complete");
+  tone(PIN_BUZZER, 900, 200);
 }
 
 void loop() {
