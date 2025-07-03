@@ -1,0 +1,61 @@
+
+# .clang-format configuration for Arduino/ESP32 projects
+# Based on Google style with Arduino-friendly modifications
+
+BasedOnStyle: Google
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 100
+
+# Brace positioning
+BreakBeforeBraces: Attach
+Cpp11BracedListStyle: true
+
+# Function declarations
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+
+# Spacing
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Alignment
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: true
+AlignTrailingComments: true
+
+# Indentation
+IndentCaseLabels: true
+AccessModifierOffset: -1
+
+# Line breaks
+MaxEmptyLinesToKeep: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackParameters: false
+BinPackArguments: false
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<Arduino\.h>'
+    Priority: 1
+  - Regex: '^<[[:alnum:]_]+\.h>'
+    Priority: 2
+  - Regex: '^<.*>'
+    Priority: 3
+  - Regex: '^".*"'
+    Priority: 4
+
+# Arduino-specific formatting
+# Preserve preprocessor formatting for Arduino macros
+IndentPPDirectives: BeforeHash
+PPIndentWidth: 2

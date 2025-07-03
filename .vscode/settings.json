@@ -1,0 +1,9 @@
+{
+  "cSpell.words": ["atmelavr", "espressif"],
+  "C_Cpp.clang_format_style": "file",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-vscode.cpptools",
+  "files.associations": {
+    "*.ino": "cpp"
+  }
+}
