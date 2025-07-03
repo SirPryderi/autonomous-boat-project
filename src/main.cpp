@@ -1,24 +1,37 @@
 #include <Arduino.h>
 
+#ifdef ESP32_BUILD
+#include <BoatController.h>
+BoatController boatController;
+#endif
+
+#ifdef ARDUINO_UNO_BUILD
+#include <UnoController.h>
+UnoController unoController;
+#endif
+
 void setup() {
   Serial.begin(SERIAL_SPEED);
 
 #ifdef ESP32_BUILD
-  Serial.println("Hello from ESP32!");
+  boatController.begin();
 #endif
 
 #ifdef ARDUINO_UNO_BUILD
-  Serial.println("Hello from Arduino Uno!");
+  unoController.begin();
 #endif
 
   pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
 
-  Serial.println("Setup complete");
+  Serial.println("[@] Setup complete");
 }
 
 void loop() {
-  digitalWrite(LED_PIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_PIN, LOW);
-  delay(1000);
+#ifdef ESP32_BUILD
+  boatController.handle();
+#endif
+#ifdef ARDUINO_UNO_BUILD
+  unoController.handle();
+#endif
 }

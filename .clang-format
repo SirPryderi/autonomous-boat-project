@@ -6,7 +6,7 @@ BasedOnStyle: Google
 IndentWidth: 2
 TabWidth: 2
 UseTab: Never
-ColumnLimit: 100
+ColumnLimit: 0
 
 # Brace positioning
 BreakBeforeBraces: Attach
@@ -30,10 +30,12 @@ AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignOperands: true
 AlignTrailingComments: true
+AlignAfterOpenBracket: DontAlign
 
 # Indentation
 IndentCaseLabels: true
 AccessModifierOffset: -1
+ContinuationIndentWidth: 2
 
 # Line breaks
 MaxEmptyLinesToKeep: 2
@@ -57,5 +59,5 @@ IncludeCategories:
 
 # Arduino-specific formatting
 # Preserve preprocessor formatting for Arduino macros
-IndentPPDirectives: BeforeHash
-PPIndentWidth: 2
+IndentPPDirectives: AfterHash
+PPIndentWidth: 0
