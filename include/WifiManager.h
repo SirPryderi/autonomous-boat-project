@@ -14,9 +14,12 @@ class WifiManager {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, pass);
 
+    Display::render("Connecting to wifi...");
+
     while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-      Serial.println("Connection Failed! Rebooting...");
       delay(5000);
+      Serial.println("Connection Failed! Rebooting...");
+      Display::render("Connection Failed! Rebooting...");
       ESP.restart();
     }
 
