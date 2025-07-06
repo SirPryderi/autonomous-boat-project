@@ -22,5 +22,9 @@ class WifiManager {
 
     Serial.printf("WIFI connected to %s\n", ssid);
     Serial.printf("IP address: %s\n", WiFi.localIP().toString());
+
+    String displaySummary = "WiFi [" + String(ssid) + "]";
+
+    Display::render(displaySummary.c_str(), 0);
   }
 };

@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Adafruit",
     "atmelavr",
     "espressif",
     "OLED",
@@ -8,6 +9,7 @@
   "C_Cpp.clang_format_style": "file",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "ms-vscode.cpptools",
+  "editor.tabSize": 2,
   "files.associations": {
     "*.ino": "cpp",
     "array": "cpp",
