@@ -1,21 +1,14 @@
 #pragma once
 #include <ArduinoOTA.h>
 
-#ifndef WIFI_SSID
-#error "WIFI_SSID not defined!"
-#endif
-
-static const char* ssid = WIFI_SSID;
-static const char* pass = WIFI_PASS;
+static const char* hostname = OTA_HOSTNAME;
+static const char* password = OTA_PASSWORD;
 
 class OtaManager {
  public:
-  void begin(const char* hostname = nullptr) {
-    WiFi.begin(ssid, pass);
-    WiFi.waitForConnectResult();
-
-    if (hostname)
-      ArduinoOTA.setHostname(hostname);
+  void begin() {
+    ArduinoOTA.setHostname(hostname);
+    ArduinoOTA.setPassword(password);
 
     ArduinoOTA
       .onStart([]() {
@@ -32,6 +25,8 @@ class OtaManager {
       });
 
     ArduinoOTA.begin();
+
+    Serial.println("Ready for OTA");
   }
 
   void handle() {

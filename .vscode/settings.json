@@ -1,9 +1,24 @@
 {
-  "cSpell.words": ["atmelavr", "espressif"],
+  "cSpell.words": [
+    "atmelavr",
+    "espressif",
+    "OLED",
+    "sysenv"
+  ],
   "C_Cpp.clang_format_style": "file",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "ms-vscode.cpptools",
   "files.associations": {
-    "*.ino": "cpp"
+    "*.ino": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "unordered_set": "cpp",
+    "vector": "cpp",
+    "string_view": "cpp",
+    "memory": "cpp",
+    "random": "cpp",
+    "initializer_list": "cpp"
   }
 }
