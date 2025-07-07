@@ -2,8 +2,12 @@
   "cSpell.words": [
     "Adafruit",
     "atmelavr",
+    "bmellink",
+    "espota",
     "espressif",
+    "ledc",
     "OLED",
+    "STBY",
     "sysenv"
   ],
   "C_Cpp.clang_format_style": "file",
@@ -21,6 +25,8 @@
     "string_view": "cpp",
     "memory": "cpp",
     "random": "cpp",
-    "initializer_list": "cpp"
+    "initializer_list": "cpp",
+    "atomic": "cpp",
+    "cstdint": "cpp"
   }
 }
