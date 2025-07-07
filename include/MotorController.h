@@ -51,8 +51,8 @@ class MotorController {
 
     digitalWrite(PIN_MOTOR_STBY, HIGH);
 
-    double motor1Speed = throttle * (1.0 + balance / 100.0);
-    double motor2Speed = throttle * (1.0 - balance / 100.0);
+    double motor1Speed = (double)throttle * (1.0 + balance / 1000.0);
+    double motor2Speed = (double)throttle * (1.0 - balance / 1000.0);
 
     setMotorInternal(motor1Speed, PIN_MOTOR_A_IN1, PIN_MOTOR_A_IN2, pwmChannel1);
     setMotorInternal(motor2Speed, PIN_MOTOR_B_IN1, PIN_MOTOR_B_IN2, pwmChannel2);
