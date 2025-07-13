@@ -59,8 +59,8 @@ class BoatController {
     Display::render(String(valLine1).c_str(), 5);
     Display::render(String(valLine2).c_str(), 6);
 
-    long mappedThrottle = map((long)chan2, 1000, 2000, -1000, 1000);
-    long mappedSteering = map((long)chan1, 1000, 2000, -1000, 1000);
+    int mappedThrottle = map(chan2, 1000, 2000, -1000, 1000);
+    int mappedSteering = map(chan1, 1000, 2000, -1000, 1000);
 
     if (mappedThrottle != throttle || mappedSteering != steering) {
       throttle = mappedThrottle;

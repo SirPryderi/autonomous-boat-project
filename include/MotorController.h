@@ -37,9 +37,9 @@ class MotorController {
     setMotors(0, 0);
   }
 
-  void setMotors(long throttle, long balance = 0) {
+  void setMotors(int throttle, int steering = 0) {
     throttle = constrain(throttle, -1000, 1000);
-    balance = constrain(balance, -1000, 1000);
+    steering = constrain(steering, -1000, 1000);
 
     if (throttle == 0) {
       Display::render("SLP", 2);
@@ -53,8 +53,31 @@ class MotorController {
 
     digitalWrite(PIN_MOTOR_STBY, HIGH);
 
-    double motor1Speed = (double)throttle * (1.0 + balance / 1000.0);
-    double motor2Speed = (double)throttle * (1.0 - balance / 1000.0);
+    // Differential drive truth table:
+    // T: 0     S: 0      = L: 0     R: 0
+    // T: 1000  S: 0      = L: 1000  R: 1000
+    // T: 1000  S: 1000   = L: 1000  R: 0
+    // T: 1000  S: -1000  = L: 0     R: 1000
+    // T: 500   S: 1000   = L: 500   R: 0
+    // T: 1000  S: 500    = L: 1000  R: 500
+    // T: 0     S: 0      = L: 0     R: 0
+
+    int motor1Speed = 0;
+    int motor2Speed = 0;
+
+    if (steering > 0) {
+      // Forward right turn
+      motor1Speed = map(steering, 0, 1000, throttle, 0);
+      motor2Speed = throttle;
+    } else if (steering < 0) {
+      // Forward left turn
+      motor1Speed = throttle;
+      motor2Speed = map(steering, 0, -1000, throttle, 0);
+    } else {
+      // Forward straight
+      motor1Speed = throttle;
+      motor2Speed = throttle;
+    }
 
     setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
     setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
@@ -70,7 +93,7 @@ class MotorController {
   }
 
  private:
-  void setMotorInternal(double throttle, int pwmChannel1, int pwmChannel2) {
+  void setMotorInternal(int throttle, int pwmChannel1, int pwmChannel2) {
     throttle = constrain(throttle, -1000.0, 1000.0);
 
     if (throttle == 0) {
