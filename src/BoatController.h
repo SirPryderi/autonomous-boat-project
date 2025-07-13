@@ -21,9 +21,9 @@ class BoatController {
   void begin() {
     Serial.println("[@] Hello from ESP32!");
     Display::begin();
+    motorController.begin();
     wifiManager.connectToWifi();
     otaManager.begin();
-    motorController.begin();
 
     Buttons
       .onButtonPress(GPIO_NUM_32, []() {
@@ -48,6 +48,10 @@ class BoatController {
     int chan4 = IBus.readChannel(3);
     int chan5 = IBus.readChannel(4);
     int chan6 = IBus.readChannel(5);
+
+    if (chan1 < 1000) {
+      return;
+    }
 
     String valLine1 = "1:" + String(chan1 / 1000.0) + " 2:" + String(chan2 / 1000.0) + " 3:" + String(chan3 / 1000.0);
     String valLine2 = "4:" + String(chan4 / 1000.0) + " 5:" + String(chan5 / 1000.0) + " 6:" + String(chan6 / 1000.0);
