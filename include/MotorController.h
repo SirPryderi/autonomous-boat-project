@@ -2,8 +2,10 @@
 
 #include <Display.h>
 
-const int pwmChannel1 = 0;
-const int pwmChannel2 = 1;
+const uint8_t PWM_CHANNEL_A_1 = 0;
+const uint8_t PWM_CHANNEL_A_2 = 1;
+const uint8_t PWM_CHANNEL_B_1 = 2;
+const uint8_t PWM_CHANNEL_B_2 = 4;
 
 const int freq = 50000;
 const int resolution = 8;
@@ -26,13 +28,13 @@ class MotorController {
 
     digitalWrite(PIN_MOTOR_STBY, LOW);
 
-    ledcSetup(pwmChannel1, freq, resolution);
-    ledcAttachPin(PIN_MOTOR_A_IN2, pwmChannel1);
-    ledcWrite(pwmChannel1, 0);
+    setupChannel(PWM_CHANNEL_A_1, PIN_MOTOR_A_IN1);
+    setupChannel(PWM_CHANNEL_A_2, PIN_MOTOR_A_IN2);
 
-    ledcSetup(pwmChannel2, freq, resolution);
-    ledcAttachPin(PIN_MOTOR_B_IN2, pwmChannel2);
-    ledcWrite(pwmChannel2, 0);
+    setupChannel(PWM_CHANNEL_B_1, PIN_MOTOR_B_IN1);
+    setupChannel(PWM_CHANNEL_B_2, PIN_MOTOR_B_IN2);
+
+    setMotors(0, 0);
   }
 
   void setMotors(long throttle, long balance = 0) {
@@ -42,8 +44,8 @@ class MotorController {
     if (throttle == 0) {
       Display::render("SLP", 2);
       digitalWrite(PIN_MOTOR_STBY, LOW);
-      setMotorInternal(0, PIN_MOTOR_A_IN1, PIN_MOTOR_A_IN2, pwmChannel1);
-      setMotorInternal(0, PIN_MOTOR_B_IN1, PIN_MOTOR_B_IN2, pwmChannel2);
+      setMotorInternal(0, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
+      setMotorInternal(0, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
       Display::render("R - OFF", 3);
       Display::render("L - OFF", 4);
       return;
@@ -54,8 +56,8 @@ class MotorController {
     double motor1Speed = (double)throttle * (1.0 + balance / 1000.0);
     double motor2Speed = (double)throttle * (1.0 - balance / 1000.0);
 
-    setMotorInternal(motor1Speed, PIN_MOTOR_A_IN1, PIN_MOTOR_A_IN2, pwmChannel1);
-    setMotorInternal(motor2Speed, PIN_MOTOR_B_IN1, PIN_MOTOR_B_IN2, pwmChannel2);
+    setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
+    setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
 
     Display::render("", 2);
     String motorSummaryR = "R  " + String(motor1Speed / 10) + " %";
@@ -68,20 +70,30 @@ class MotorController {
   }
 
  private:
-  void setMotorInternal(double throttle, int pinIn1, int pinIn2, int pwmChannel) {
+  void setMotorInternal(double throttle, int pwmChannel1, int pwmChannel2) {
     throttle = constrain(throttle, -1000.0, 1000.0);
 
     if (throttle == 0) {
-      digitalWrite(pinIn1, LOW);
-      digitalWrite(pinIn2, LOW);
-      ledcWrite(pwmChannel, 0);
+      ledcWrite(pwmChannel1, 0);
+      ledcWrite(pwmChannel2, 0);
       return;
     }
 
     bool forward = throttle > 0;
     uint32_t duty = map(abs(throttle), 0, 1000, minDuty, maxDuty);
 
-    digitalWrite(pinIn1, forward ? LOW : HIGH);
-    ledcWrite(pwmChannel, duty);
+    if (forward) {
+      ledcWrite(pwmChannel1, duty);
+      ledcWrite(pwmChannel2, 0);
+    } else {
+      ledcWrite(pwmChannel2, duty);
+      ledcWrite(pwmChannel1, 0);
+    }
+  }
+
+  void setupChannel(uint8_t channel, uint8_t pin) {
+    ledcSetup(channel, freq, resolution);
+    ledcAttachPin(pin, channel);
+    ledcWrite(channel, 0);
   }
 };
