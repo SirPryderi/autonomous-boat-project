@@ -17,6 +17,12 @@ long throttle = 0;
 long steering = 0;
 long turning = 0;
 
+void handleIBus(void* pvParameters) {
+  while (1) {
+    IBus.loop();
+  }
+}
+
 class BoatController {
  public:
   void begin() {
@@ -24,6 +30,7 @@ class BoatController {
     Display::begin();
     motorController.begin();
     wifiManager.connectToWifi();
+
     otaManager.begin();
 
     Buttons
@@ -34,8 +41,17 @@ class BoatController {
         motorController.setMotors(throttle += 20);
       });
 
+    IBus.begin(Serial2, IBUSBM_NOTIMER);
 
-    IBus.begin(Serial2);
+    xTaskCreatePinnedToCore(
+      handleIBus,    // Function to implement the task
+      "handleIBus",  // Name of the task
+      1000,          // Stack size in bytes
+      NULL,          // Task input parameter
+      0,             // Priority of the task
+      NULL,          // Task handle.
+      0              // Core where the task should run
+    );
   }
 
   void handle() {
@@ -50,25 +66,23 @@ class BoatController {
     int chan5 = IBus.readChannel(4);
     int chan6 = IBus.readChannel(5);
 
-    if (chan1 < 1000) {
-      return;
-    }
-
     String valLine1 = "1:" + String(chan1 / 1000.0) + " 2:" + String(chan2 / 1000.0) + " 3:" + String(chan3 / 1000.0);
     String valLine2 = "4:" + String(chan4 / 1000.0) + " 5:" + String(chan5 / 1000.0) + " 6:" + String(chan6 / 1000.0);
 
     Display::render(String(valLine1).c_str(), 5);
     Display::render(String(valLine2).c_str(), 6);
 
-    int mappedThrottle = map(chan2, 1000, 2000, -1000, 1000);
-    int mappedSteering = map(chan1, 1000, 2000, -1000, 1000);
-    int mappedTurning = map(chan4, 1000, 2000, -1000, 1000);
+    if (chan1 >= 1000) {
+      int mappedThrottle = map(chan2, 1000, 2000, -1000, 1000);
+      int mappedSteering = map(chan1, 1000, 2000, -1000, 1000);
+      int mappedTurning = map(chan4, 1000, 2000, -1000, 1000);
 
-    if (mappedThrottle != throttle || mappedSteering != steering || mappedTurning != turning) {
-      throttle = mappedThrottle;
-      steering = mappedSteering;
-      turning = mappedTurning;
-      motorController.setMotors(throttle, steering, turning);
+      if (mappedThrottle != throttle || mappedSteering != steering || mappedTurning != turning) {
+        throttle = mappedThrottle;
+        steering = mappedSteering;
+        turning = mappedTurning;
+        motorController.setMotors(throttle, steering, turning);
+      }
     }
   }
 };
