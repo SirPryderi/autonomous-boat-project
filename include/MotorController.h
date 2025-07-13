@@ -39,11 +39,12 @@ class MotorController {
     setMotors(0, 0);
   }
 
-  void setMotors(int throttle, int steering = 0) {
+  void setMotors(int throttle, int steering = 0, int turning = 0) {
     throttle = constrain(throttle, -1000, 1000);
     steering = constrain(steering, -1000, 1000);
+    turning = constrain(turning, -1000, 1000);
 
-    if (throttle == 0) {
+    if (throttle == 0 && turning == 0) {
       Display::render("SLP", 2);
       digitalWrite(PIN_MOTOR_STBY, LOW);
       setMotorInternal(0, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
@@ -56,7 +57,10 @@ class MotorController {
     digitalWrite(PIN_MOTOR_STBY, HIGH);
 
     int motor1Speed, motor2Speed;
-    std::tie(motor1Speed, motor2Speed) = getDifferentialEngineThrottles(throttle, steering);
+    std::tie(motor1Speed, motor2Speed) =
+      turning == 0
+        ? getDifferentialEngineThrottles(throttle, steering)
+        : turn(turning);
 
     setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
     setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
@@ -124,6 +128,13 @@ class MotorController {
       motor1Speed = throttle;
       motor2Speed = throttle;
     }
+
+    return {motor1Speed, motor2Speed};
+  }
+
+  std::tuple<int, int> turn(int turning) {
+    int motor1Speed = -turning;
+    int motor2Speed = turning;
 
     return {motor1Speed, motor2Speed};
   }

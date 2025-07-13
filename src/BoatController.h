@@ -15,6 +15,7 @@ IBusBM IBus;
 
 long throttle = 0;
 long steering = 0;
+long turning = 0;
 
 class BoatController {
  public:
@@ -44,8 +45,8 @@ class BoatController {
 
     int chan1 = IBus.readChannel(0);
     int chan2 = IBus.readChannel(1);
-    int chan3 = IBus.readChannel(2);
-    int chan4 = IBus.readChannel(3);
+    int chan3 = IBus.readChannel(2);  // Left stick - vertical
+    int chan4 = IBus.readChannel(3);  // Left stick - horizontal
     int chan5 = IBus.readChannel(4);
     int chan6 = IBus.readChannel(5);
 
@@ -61,11 +62,13 @@ class BoatController {
 
     int mappedThrottle = map(chan2, 1000, 2000, -1000, 1000);
     int mappedSteering = map(chan1, 1000, 2000, -1000, 1000);
+    int mappedTurning = map(chan4, 1000, 2000, -1000, 1000);
 
-    if (mappedThrottle != throttle || mappedSteering != steering) {
+    if (mappedThrottle != throttle || mappedSteering != steering || mappedTurning != turning) {
       throttle = mappedThrottle;
       steering = mappedSteering;
-      motorController.setMotors(throttle, steering);
+      turning = mappedTurning;
+      motorController.setMotors(throttle, steering, turning);
     }
   }
 };
