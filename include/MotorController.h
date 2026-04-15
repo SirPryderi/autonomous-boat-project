@@ -7,14 +7,14 @@
 const uint8_t PWM_CHANNEL_A_1 = 0;
 const uint8_t PWM_CHANNEL_A_2 = 1;
 const uint8_t PWM_CHANNEL_B_1 = 2;
-const uint8_t PWM_CHANNEL_B_2 = 4;
+const uint8_t PWM_CHANNEL_B_2 = 3;  // this was 4 before, was there a reason to avoid that pin?
 
-const int freq = 50000;
-const int resolution = 8;
+const int freq = 2000;  // lower: better low duty cycles, higher than  20k: not audible whine
+const int resolution = 10;
 const int maxDutyRange = (1 << resolution) - 1;
 
-const double minDutyPercent = 0.10;
-const double maxDutyPercent = 0.15;
+const double minDutyPercent = 0.15;
+const double maxDutyPercent = 1.00;
 
 const uint32_t minDuty = static_cast<uint32_t>(maxDutyRange * minDutyPercent);
 const uint32_t maxDuty = static_cast<uint32_t>(maxDutyRange * maxDutyPercent);
