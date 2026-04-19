@@ -18,13 +18,13 @@ class WifiManager {
 
     while (WiFi.waitForConnectResult() != WL_CONNECTED) {
       delay(5000);
-      Serial.println("Connection Failed! Rebooting...");
+      Serial.println("[!] Connection Failed! Rebooting...");
       Display::render("Connection Failed! Rebooting...");
       ESP.restart();
     }
 
-    Serial.printf("WIFI connected to %s\n", ssid);
-    Serial.printf("IP address: %s\n", WiFi.localIP().toString());
+    Serial.printf("[@] WIFI connected to %s\n", ssid);
+    Serial.printf("[@] IP address: %s\n", WiFi.localIP().toString());
 
     String displaySummary = "WiFi [" + String(ssid) + "]";
 
