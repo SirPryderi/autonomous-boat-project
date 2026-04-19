@@ -9,12 +9,12 @@ const uint8_t PWM_CHANNEL_A_2 = 1;
 const uint8_t PWM_CHANNEL_B_1 = 2;
 const uint8_t PWM_CHANNEL_B_2 = 3;  // this was 4 before, was there a reason to avoid that pin?
 
-const int freq = 2000;  // lower: better low duty cycles, higher than  20k: not audible whine
+const int freq = 20000;  // lower: better low duty cycles, higher than  20k: not audible whine
 const int resolution = 10;
 const int maxDutyRange = (1 << resolution) - 1;
 
-const double minDutyPercent = 0.15;
-const double maxDutyPercent = 1.00;
+const double minDutyPercent = 0.30;
+const double maxDutyPercent = 0.70;
 
 const uint32_t minDuty = static_cast<uint32_t>(maxDutyRange * minDutyPercent);
 const uint32_t maxDuty = static_cast<uint32_t>(maxDutyRange * maxDutyPercent);
@@ -45,12 +45,10 @@ class MotorController {
     turning = constrain(turning, -1000, 1000);
 
     if (throttle == 0 && turning == 0) {
-      Display::render("SLP", 2);
       digitalWrite(PIN_MOTOR_STBY, LOW);
       setMotorInternal(0, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
       setMotorInternal(0, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
-      Display::render("R - OFF", 3);
-      Display::render("L - OFF", 4);
+      Display::render("SLP R OFF  L OFF", 3);
       return;
     }
 
@@ -65,11 +63,9 @@ class MotorController {
     setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
     setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
 
-    Display::render("", 2);
-    String motorSummaryR = "R  " + String(motor1Speed / 10) + " %";
-    String motorSummaryL = "L  " + String(motor2Speed / 10) + " %";
-    Display::render(motorSummaryR.c_str(), 3);
-    Display::render(motorSummaryL.c_str(), 4);
+    char motorSummary[20];
+    sprintf(motorSummary, "    R %03d%% L %03d%%", motor1Speed / 10, motor2Speed / 10);
+    Display::render(motorSummary, 3);
   }
 
   void handle() {
