@@ -6,11 +6,13 @@
 #include <IBusBM.h>
 #include <MotorController.h>
 #include <OTAManager.h>
+#include <SensorsController.h>
 #include <WifiManager.h>
 
 OtaManager otaManager;
 WifiManager wifiManager;
 MotorController motorController;
+SensorController sensorController;
 IBusBM IBus;
 
 long throttle = 0;
@@ -32,6 +34,7 @@ class BoatController {
     wifiManager.connectToWifi();
 
     otaManager.begin();
+    sensorController.begin();
 
     Buttons
       .onButtonPress(GPIO_NUM_32, []() {
@@ -58,6 +61,7 @@ class BoatController {
     otaManager.handle();
     motorController.handle();
     Buttons.handle();
+    sensorController.handle();
 
     int chan1 = IBus.readChannel(0);
     int chan2 = IBus.readChannel(1);
