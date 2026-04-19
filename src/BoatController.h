@@ -72,10 +72,10 @@ class BoatController {
     Display::render(String(valLine1).c_str(), 5);
     Display::render(String(valLine2).c_str(), 6);
 
-    if (chan1 >= 1000) {
-      int mappedThrottle = map(chan2, 1000, 2000, -1000, 1000);
-      int mappedSteering = map(chan1, 1000, 2000, -1000, 1000);
-      int mappedTurning = map(chan4, 1000, 2000, -1000, 1000);
+    if (chan1 >= 1000 || chan3 >= 1000) {
+      int mappedThrottle = map(chan3, 1000, 2000, 0, 1000);
+      int mappedSteering = map(chan4, 1000, 2000, -1000, 1000);
+      int mappedTurning = map(chan1, 1000, 2000, -1000, 1000);
 
       if (mappedThrottle != throttle || mappedSteering != steering || mappedTurning != turning) {
         throttle = mappedThrottle;
