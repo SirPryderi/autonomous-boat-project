@@ -8,6 +8,7 @@
 #include <OTAManager.h>
 #include <SensorsController.h>
 #include <WifiManager.h>
+#include <Wire.h>
 
 OtaManager otaManager;
 WifiManager wifiManager;
@@ -29,6 +30,7 @@ class BoatController {
  public:
   void begin() {
     Serial.println("[@] Hello from ESP32!");
+    Wire.begin(PIN_SDA, PIN_SCL);
     Display::begin();
     motorController.begin();
     wifiManager.connectToWifi();
