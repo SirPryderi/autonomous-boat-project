@@ -20,6 +20,8 @@ long throttle = 0;
 long steering = 0;
 long turning = 0;
 
+bool stealthMode = false;
+
 void handleIBus(void* pvParameters) {
   while (1) {
     IBus.loop();
@@ -32,10 +34,19 @@ class BoatController {
     Serial.println("[@] Hello from ESP32!");
     Wire.begin(PIN_SDA, PIN_SCL);
     Display::begin();
-    motorController.begin();
-    wifiManager.connectToWifi();
 
-    otaManager.begin();
+    pinMode(PIN_STEALTH_SWITCH, INPUT_PULLUP);
+    stealthMode = digitalRead(PIN_STEALTH_SWITCH) == HIGH;
+
+    if (!stealthMode) {
+      wifiManager.connectToWifi();
+      otaManager.begin();
+    } else {
+      Serial.println("[@] No network mode");
+      Display::render("No network", 0);
+    }
+
+    motorController.begin();
     sensorController.begin();
 
     Buttons
@@ -60,7 +71,10 @@ class BoatController {
   }
 
   void handle() {
-    otaManager.handle();
+    if (!stealthMode) {
+      otaManager.handle();
+    }
+
     motorController.handle();
     Buttons.handle();
     sensorController.handle();
