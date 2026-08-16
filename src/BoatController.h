@@ -31,7 +31,7 @@ void handleIBus(void* pvParameters) {
 class BoatController {
  public:
   void begin() {
-    Serial.println("[@] Hello from ESP32!");
+    Serial.println("[@] Hello from BoatController!");
     Wire.begin(PIN_SDA, PIN_SCL);
     Display::begin();
 
@@ -43,7 +43,7 @@ class BoatController {
       otaManager.begin();
     } else {
       Serial.println("[@] No network mode");
-      Display::render("No network", 0);
+      Display::render("No network", 0, true);
     }
 
     motorController.begin();
@@ -68,6 +68,7 @@ class BoatController {
       NULL,          // Task handle.
       0              // Core where the task should run
     );
+    Serial.println("[@] Boot completed");
   }
 
   void handle() {
@@ -104,5 +105,7 @@ class BoatController {
         motorController.setMotors(throttle, steering, turning);
       }
     }
+
+    Display::handle();
   }
 };

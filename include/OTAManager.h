@@ -3,9 +3,11 @@
 
 static const char* hostname = OTA_HOSTNAME;
 static const char* password = OTA_PASSWORD;
-static const uint displayLine = 2;
 
 class OtaManager {
+ private:
+  static const uint8_t displayLine = 2;
+
  public:
   void begin() {
     ArduinoOTA.setHostname(hostname);
@@ -14,30 +16,30 @@ class OtaManager {
     ArduinoOTA
       .onStart([]() {
         Serial.println("[@] OTA start");
-        Display::render("OTA starting...", displayLine);
+        Display::render("OTA starting...", displayLine, true);
       })
       .onEnd([]() {
         Serial.println("\n[@] OTA end");
-        Display::render("OTA completed!", displayLine);
+        Display::render("OTA completed!", displayLine, true);
       })
       .onProgress([](unsigned int p, unsigned int t) {
         Serial.printf("[@] OTA: %u%%\r", (p * 100) / t);
-        Display::render(progressBar(p, t).c_str(), displayLine);
+        Display::render(progressBar(p, t).c_str(), displayLine, true);
       })
       .onError([](ota_error_t e) {
         Serial.printf("[!] OTA error[%u]\n", e);
-        Display::render(("[!] OTA error: " + String(e)).c_str(), displayLine);
+        Display::render(("[!] OTA error: " + String(e)).c_str(), displayLine, true);
         Serial.printf("[!] OTA error[%u]: ", e);
         if (e == OTA_AUTH_ERROR)
-          Display::render("OTA Auth Failed", displayLine);
+          Display::render("OTA Auth Failed", displayLine, true);
         else if (e == OTA_BEGIN_ERROR)
-          Display::render("OTA Begin Failed", displayLine);
+          Display::render("OTA Begin Failed", displayLine, true);
         else if (e == OTA_CONNECT_ERROR)
-          Display::render("OTA Connect Failed", displayLine);
+          Display::render("OTA Connect Failed", displayLine, true);
         else if (e == OTA_RECEIVE_ERROR)
-          Display::render("OTA Receive Failed", displayLine);
+          Display::render("OTA Receive Failed", displayLine, true);
         else if (e == OTA_END_ERROR)
-          Display::render("OTA End Failed", displayLine);
+          Display::render("OTA End Failed", displayLine, true);
       });
 
     ArduinoOTA.begin();

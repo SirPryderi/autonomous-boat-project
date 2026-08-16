@@ -9,17 +9,20 @@ static const char* ssid = WIFI_SSID;
 static const char* pass = WIFI_PASS;
 
 class WifiManager {
+ private:
+  static const uint8_t displayLine = 0;
+
  public:
   void connectToWifi() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, pass);
 
-    Display::render("Connecting to wifi...");
+    Display::render("Connecting to wifi...", displayLine, true);
 
     while (WiFi.waitForConnectResult() != WL_CONNECTED) {
       delay(5000);
       Serial.println("[!] Connection Failed! Rebooting...");
-      Display::render("Connection Failed! Rebooting...");
+      Display::render("Connection Failed! Rebooting...", displayLine, true);
       ESP.restart();
     }
 
@@ -28,6 +31,6 @@ class WifiManager {
 
     String displaySummary = "WiFi [" + String(ssid) + "]";
 
-    Display::render(displaySummary.c_str(), 0);
+    Display::render(displaySummary.c_str(), displayLine, true);
   }
 };
