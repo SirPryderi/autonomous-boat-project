@@ -3,6 +3,7 @@
 #include <ArduinoOTA.h>
 #include <ButtonsController.h>
 #include <Display.h>
+#include <ExpanderController.h>
 #include <IBusBM.h>
 #include <MotorController.h>
 #include <OTAManager.h>
@@ -34,6 +35,7 @@ class BoatController {
     Serial.println("[@] Hello from BoatController!");
     Wire.begin(PIN_SDA, PIN_SCL);
     Display::begin();
+    ExpanderController::begin();
 
     pinMode(PIN_STEALTH_SWITCH, INPUT_PULLUP);
     stealthMode = digitalRead(PIN_STEALTH_SWITCH) == HIGH;
@@ -106,6 +108,7 @@ class BoatController {
       }
     }
 
+    ExpanderController::handle();
     Display::handle();
   }
 };
