@@ -3,18 +3,21 @@
 
 #include <tuple>
 
-const uint8_t PWM_CHANNEL_A_1 = 0;
-const uint8_t PWM_CHANNEL_B_1 = 2;
+// channels 1/2 are reserved for tones
+const uint8_t PWM_CHANNEL_A_1 = 2;
+const uint8_t PWM_CHANNEL_A_2 = 3;
+const uint8_t PWM_CHANNEL_B_1 = 4;
+const uint8_t PWM_CHANNEL_B_2 = 5;
 
-const int freq = 20000;  // lower: better low duty cycles, higher than 20k: not audible whine
-const int resolution = 10;
-const int maxDutyRange = (1 << resolution) - 1;
+const uint32_t freq = 20000;  // lower: better low duty cycles, higher than 20k: not audible whine
+const uint8_t resolution = 10;
+const uint32_t maxDutyRange = (1 << resolution) - 1;
 
-const double minDutyPercent = 0.20;
-const double maxDutyPercent = 0.50;
+const uint8_t minDutyPercent = 05;  // %
+const uint8_t maxDutyPercent = 50;  // %
 
-const uint32_t minDuty = static_cast<uint32_t>(maxDutyRange * minDutyPercent);
-const uint32_t maxDuty = static_cast<uint32_t>(maxDutyRange * maxDutyPercent);
+const uint32_t minDuty = maxDutyRange * minDutyPercent / 100u;
+const uint32_t maxDuty = maxDutyRange * maxDutyPercent / 100u;
 
 class MotorController {
  public:
@@ -27,8 +30,10 @@ class MotorController {
 
     digitalWrite(PIN_MOTOR_STBY, LOW);
 
-    setupChannel(PWM_CHANNEL_A_1, PIN_MOTOR_A_PWM);
-    setupChannel(PWM_CHANNEL_B_1, PIN_MOTOR_B_PWM);
+    setupChannel(PWM_CHANNEL_A_1, PIN_MOTOR_A_IN1);
+    setupChannel(PWM_CHANNEL_A_2, PIN_MOTOR_A_IN2);
+    setupChannel(PWM_CHANNEL_B_1, PIN_MOTOR_B_IN1);
+    setupChannel(PWM_CHANNEL_B_2, PIN_MOTOR_B_IN2);
 
     setMotors(0, 0);
   }
@@ -40,8 +45,8 @@ class MotorController {
 
     if (throttle == 0 && turning == 0) {
       digitalWrite(PIN_MOTOR_STBY, LOW);
-      setMotorInternal(0, PWM_CHANNEL_A_1, PIN_MOTOR_A_IN1, PIN_MOTOR_A_IN2);
-      setMotorInternal(0, PWM_CHANNEL_B_1, PIN_MOTOR_B_IN2, PIN_MOTOR_B_IN1);
+      setMotorInternal(0, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
+      setMotorInternal(0, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
       Display::render("SLP R OFF  L OFF", 3);
       return;
     }
@@ -54,8 +59,8 @@ class MotorController {
         ? getDifferentialEngineThrottles(throttle, steering)
         : turn(turning);
 
-    setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PIN_MOTOR_A_IN1, PIN_MOTOR_A_IN2);
-    setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PIN_MOTOR_B_IN2, PIN_MOTOR_B_IN1);
+    setMotorInternal(motor1Speed, PWM_CHANNEL_A_1, PWM_CHANNEL_A_2);
+    setMotorInternal(motor2Speed, PWM_CHANNEL_B_1, PWM_CHANNEL_B_2);
 
     char motorSummary[20];
     sprintf(motorSummary, "    R %03d%% L %03d%%", motor1Speed / 10, motor2Speed / 10);
@@ -66,13 +71,12 @@ class MotorController {
   }
 
  private:
-  void setMotorInternal(int throttle, int pwmChannel, int pin1, int pin2) {
+  void setMotorInternal(int throttle, int pwmChannel1, int pwmChannel2) {
     throttle = constrain(throttle, -1000.0, 1000.0);
 
     if (throttle == 0) {
-      ledcWrite(pwmChannel, 0);
-      digitalWrite(pin1, LOW);
-      digitalWrite(pin2, LOW);
+      ledcWrite(pwmChannel1, 0);
+      ledcWrite(pwmChannel2, 0);
       return;
     }
 
@@ -80,14 +84,12 @@ class MotorController {
     uint32_t duty = map(abs(throttle), 0, 1000, minDuty, maxDuty);
 
     if (forward) {
-      digitalWrite(pin1, HIGH);
-      digitalWrite(pin2, LOW);
+      ledcWrite(pwmChannel1, maxDutyRange);
+      ledcWrite(pwmChannel2, maxDutyRange - duty);
     } else {
-      digitalWrite(pin1, LOW);
-      digitalWrite(pin2, HIGH);
+      ledcWrite(pwmChannel2, maxDutyRange);
+      ledcWrite(pwmChannel1, maxDutyRange - duty);
     }
-
-    ledcWrite(pwmChannel, duty);
   }
 
   void setupChannel(uint8_t channel, uint8_t pin) {
