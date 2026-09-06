@@ -13,6 +13,8 @@ WifiManager wifiManager;
 MotorController motorController;
 SensorController sensorController;
 RemoteController remoteController(motorController);
+ExpanderController expanderController;
+ButtonsController buttons;
 
 bool stealthMode = false;
 
@@ -22,13 +24,12 @@ class BoatController {
     Serial.println("[@] Hello from BoatController!");
     Wire.begin(PIN_SDA, PIN_SCL);
     Display::begin();
-    ExpanderController::begin();
+    expanderController.begin();
     motorController.begin();
     remoteController.begin();
     sensorController.begin();
 
-    pinMode(PIN_STEALTH_SWITCH, INPUT_PULLUP);
-    stealthMode = digitalRead(PIN_STEALTH_SWITCH) == HIGH;
+    stealthMode = expanderController.status.p7 == LOW;
 
     if (!stealthMode) {
       wifiManager.connectToWifi();
@@ -48,9 +49,9 @@ class BoatController {
 
     remoteController.handle();
     motorController.handle();
-    ExpanderController::handle();
+    expanderController.handle();
     sensorController.handle();
-    Buttons.handle();
+    buttons.handle(&expanderController);
     Display::handle();
   }
 };
